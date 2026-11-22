@@ -1,0 +1,5 @@
+Sessione 1 (Completare i JSON): aggiungere a eventi.json i quattro eventi mancanti e a sedi.json le due sedi mancanti, collegando ogni evento alla sede giusta tramite sede_id.
+Sessione 2 (Descrivere i dati): creare dati/SCHEMA.md con entità, campi, tipi ed esempi, chiavi primarie, relazione tra eventi e sedi, quantità dei record, modalità di aggiornamento, contenuto della pagina e schema Mermaid.
+Sessione 3 (Generare il Programma dai JSON): modificare programma.html per caricare eventi e sedi con fetch, costruire le schede mantenendo lo stile del sito e mostrare gli stati di caricamento, errore, lista vuota e sede non definita.
+Sessione 4 (Aggiungere il meteo): inserire in info.html una sezione con temperatura, vento e ora del dato attuale di Torino, la citazione di Open-Meteo e della licenza, una nota che distingua il meteo attuale dalle date del festival e un messaggio in caso di errore.
+Sessione 5 (Documentare l’uso dell’AI): preparare progettazione/resoconto-ai.md con un resoconto sintetico della sessione, includendo richieste, suggerimenti usati o adattati, verifiche e problemi affrontati.
