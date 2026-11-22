@@ -1,0 +1,17 @@
+[
+  {
+    "id": 1,
+    "nome": "Sede centrale",
+    "indirizzo": "Corso Duca degli Abruzzi 24, Torino"
+  },
+  {
+    "id": 2,
+    "nome": "Politecnico al Valentino",
+    "indirizzo": "Viale Mattioli 39, Torino"
+  },
+  {
+    "id": 3,
+    "nome": "Sede di Mirafiori",
+    "indirizzo": "Corso Luigi Settembrini 178, Torino"
+  }
+]
