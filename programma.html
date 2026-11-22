@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Programma — Segnale</title>
+  <link rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Lora:wght@400;700&amp;display=swap">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <a class="skip-link" href="#contenuto">Vai al contenuto</a>
+  <header class="site-header">
+    <div class="container">
+      <a class="brand" href="index.html">Segnale<span>Festival di design</span></a>
+      <nav>
+        <a href="index.html">Home</a>
+        <a href="programma.html">Programma</a>
+        <a href="info.html">Info e luoghi</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="contenuto" class="container">
+    <section class="intro">
+      <p class="eyebrow">12–13 giugno · Torino · Festival immaginario</p>
+      <h1 id="titolo-programma">Il programma</h1>
+      <p class="lead">Incontri, laboratori e mostre: scegli da dove cominciare.</p>
+      <p class="reading-text">Il venerdì esploriamo lettere, materiali e immagini. Il sabato incontriamo oggetti, mappe e progetti condivisi. Scopri gli appuntamenti e i luoghi del festival.</p>
+    </section>
+
+    <section class="content-section">
+      <h2 id="titolo-eventi">Gli appuntamenti</h2>
+      <div id="event-grid" class="event-grid" aria-live="polite">
+        <p class="reading-text" role="status">Caricamento degli appuntamenti…</p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer"><div class="container"><p>Segnale · Progetto didattico · Festival immaginario</p></div></footer>
+  <script>
+  const eventGrid = document.querySelector("#event-grid");
+
+  function escapeHtml(value) {
+    return String(value ?? "").replace(/[&<>"']/g, (character) => ({
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      '"': "&quot;",
+      "'": "&#039;"
+    })[character]);
+  }
+
+  function formatDate(dateString) {
+    const [year, month, day] = dateString.split("-").map(Number);
+    const date = new Date(year, month - 1, day, 12);
+
+    return new Intl.DateTimeFormat("it-IT", {
+      weekday: "long",
+      day: "numeric",
+      month: "long"
+    }).format(date);
+  }
+
+  function renderEvents(events, venues) {
+    if (events.length === 0) {
+      eventGrid.innerHTML =
+        '<p class="reading-text">Non ci sono appuntamenti da mostrare.</p>';
+      return;
+    }
+
+    const venuesById = new Map(
+      venues.map((venue) => [Number(venue.id), venue])
+    );
+
+    eventGrid.innerHTML = events.map((event) => {
+      const venue = venuesById.get(Number(event.sede_id));
+      const venueName = venue
+        ? `${venue.nome} — ${venue.id === 1
+            ? "Sede centrale"
+            : venue.id === 2
+              ? "Sede al Valentino"
+              : venue.id === 3
+                ? "Sede di Mirafiori"
+                : venue.indirizzo}`
+        : "Sede da definire";
+
+      return `
+        <article class="event-card">
+          <img
+            src="${escapeHtml(event.immagine)}"
+            alt="${escapeHtml(event.immagine_alt)}"
+            width="900"
+            height="600">
+          <div class="event-body">
+            <p class="event-meta">
+              ${escapeHtml(formatDate(event.data))} ·
+              ${escapeHtml(event.orario)} ·
+              ${escapeHtml(event.categoria)}
+            </p>
+            <h3>${escapeHtml(event.titolo)}</h3>
+            <p>${escapeHtml(event.descrizione)}</p>
+            <p class="event-place">
+              <strong>Sede:</strong> ${escapeHtml(venueName)}
+            </p>
+          </div>
+        </article>
+      `;
+    }).join("");
+  }
+
+  async function loadEvents() {
+    try {
+      const [eventsResponse, venuesResponse] = await Promise.all([
+        fetch("dati/eventi.json"),
+        fetch("dati/sedi.json")
+      ]);
+
+      if (!eventsResponse.ok || !venuesResponse.ok) {
+        throw new Error("Impossibile leggere uno o più file JSON.");
+      }
+
+      const [events, venues] = await Promise.all([
+        eventsResponse.json(),
+        venuesResponse.json()
+      ]);
+
+      if (!Array.isArray(events) || !Array.isArray(venues)) {
+        throw new Error("Il contenuto dei file JSON non è valido.");
+      }
+
+      renderEvents(events, venues);
+    } catch (error) {
+      console.error("Errore nel caricamento degli appuntamenti:", error);
+      eventGrid.innerHTML =
+        '<p class="reading-text" role="alert">Non è stato possibile caricare gli appuntamenti. Riprova più tardi.</p>';
+    }
+  }
+
+  loadEvents();
+</script>
+</body>
+</html>
